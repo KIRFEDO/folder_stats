@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
 
     
     std::vector<long int> v;
-    auto root = fs::path("../../test_cases");
+    auto root = fs::path("../test_cases");
     std::unordered_map<std::string, bool> filter = {
         {".txt", true},
     };

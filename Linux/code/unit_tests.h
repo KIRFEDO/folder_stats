@@ -18,6 +18,7 @@ std::string threadPool_tests_path = "../test_cases/threadPool_tests/";
 
 TEST(getFilePathsElements_test, empty_dir) {
 	auto root = fs::path(getFilePathsElements_tests_path+"empty_dir");
+	fs::create_directory(root);
 	auto res = getFilePathsElements(root, {});
 	ASSERT_TRUE(res.first == 0);
 	ASSERT_TRUE(res.second.size() == 0);
@@ -166,30 +167,30 @@ TEST(threadPool_test, analyze_test) {
 		ASSERT_TRUE(v[2] == 6);
 		ASSERT_TRUE(v[3] == 6);
 	}
-	// {
-	// 	auto root = fs::path(threadPool_tests_path + "file_group_2");
-	// 	auto res = getFilePathsElements(root, {
-	// 		{".txt", true}
-	// 		});
-	// 	{
-	// 		Thread_pool tp(1, res.second, &v);
-	// 	}
-	// 	ASSERT_TRUE(v[0] == 0);
-	// 	ASSERT_TRUE(v[1] == 1);
-	// 	ASSERT_TRUE(v[2] == 5);
-	// 	ASSERT_TRUE(v[3] == 10);
-	// }
-	// {
-	// 	auto root = fs::path(threadPool_tests_path + "file_group_3");
-	// 	auto res = getFilePathsElements(root, {
-	// 		{".txt", true}
-	// 		});
-	// 	{
-	// 		Thread_pool tp(3, res.second, &v);
-	// 	}
-	// 	ASSERT_TRUE(v[0] == 6);
-	// 	ASSERT_TRUE(v[1] == 3);
-	// 	ASSERT_TRUE(v[2] == 15);
-	// 	ASSERT_TRUE(v[3] == 30);
-	// }
+	{
+		auto root = fs::path(threadPool_tests_path + "file_group_2");
+		auto res = getFilePathsElements(root, {
+			{".txt", true}
+			});
+		{
+			Thread_pool tp(1, res.second, &v);
+		}
+		ASSERT_TRUE(v[0] == 0);
+		ASSERT_TRUE(v[1] == 1);
+		ASSERT_TRUE(v[2] == 5);
+		ASSERT_TRUE(v[3] == 10);
+	}
+	{
+		auto root = fs::path(threadPool_tests_path + "file_group_3");
+		auto res = getFilePathsElements(root, {
+			{".txt", true}
+			});
+		{
+			Thread_pool tp(3, res.second, &v);
+		}
+		ASSERT_TRUE(v[0] == 6);
+		ASSERT_TRUE(v[1] == 3);
+		ASSERT_TRUE(v[2] == 15);
+		ASSERT_TRUE(v[3] == 30);
+	}
 }
