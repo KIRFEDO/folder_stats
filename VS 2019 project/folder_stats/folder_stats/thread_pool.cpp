@@ -1,9 +1,17 @@
 #include "thread_pool.h"
 
-Thread_pool::Thread_pool(size_t thread_amount, const std::queue<fs::path> files_for_analysis)
+Thread_pool::Thread_pool(size_t thread_amount, const std::queue<fs::path> files_for_analysis, std::vector<long>* res)
 {
 	this->files_for_analysis = files_for_analysis;
+	res->clear();
+	res->shrink_to_fit();
+	this->res_vector_ptr = res;
 	initialize(thread_amount);
+}
+
+size_t Thread_pool::number_of_active_threads() const
+{
+	return threads.size();
 }
 
 Thread_pool::~Thread_pool()
@@ -42,6 +50,7 @@ void Thread_pool::initialize(size_t thread_amount)
 {
 	for (auto i = 0u; i < thread_amount; i++) {
 		threads.emplace_back([=]() {
+			bool analyze = false;
 			while (true) {
 				fs::path file_address;
 				{
@@ -53,11 +62,18 @@ void Thread_pool::initialize(size_t thread_amount)
 					if (stop_threads && files_for_analysis.empty()) {
 						break;
 					}
+					
+					if (!files_for_analysis.empty()) {
+						file_address = files_for_analysis.front();
+						files_for_analysis.pop();
+						analyze = true;
 
-					file_address = files_for_analysis.front();
-					files_for_analysis.pop();
+					}
 				}
-				analyze_file(file_address);
+				if (analyze) {
+					analyze_file(file_address);
+					analyze = false;
+				}
 			}
 		}
 		);
@@ -74,8 +90,8 @@ void Thread_pool::stop() noexcept
 	for (auto& t : threads) {
 		t.join();
 	}
-	std::cout << "empty_lines:" << empty_lines.load() << std::endl;
-	std::cout << "non_empty_lines:" << non_empty_lines.load() << std::endl;
-	std::cout << "words:" << words.load() << std::endl;
-	std::cout << "letters:" << letters.load() << std::endl;
+	res_vector_ptr->push_back(empty_lines.load());
+	res_vector_ptr->push_back(non_empty_lines.load());
+	res_vector_ptr->push_back(words.load());
+	res_vector_ptr->push_back(letters.load());
 }
