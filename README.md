@@ -1,6 +1,6 @@
 # Folder-stats
 
-Multithread app for creating short folder statistics
+Multithread app for creating short folder statistics. Path to the folder for analysis is stored in *folder_for_analysis* variable in *folder_stats.cpp*
 
 ## Windows
 
