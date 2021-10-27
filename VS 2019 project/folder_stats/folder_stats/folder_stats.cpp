@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
     };
     auto folder_stat = getFilePathsElements(root, filter);
     std::cout << "Number of files:" << folder_stat.first << std::endl;
-    for (auto i = 4u; i < 5; i++) {
+    for (auto i = 1u; i < std::thread::hardware_concurrency()-1; i++) {
         std::cout << "[=================================================================]" << std::endl;
         auto start = std::chrono::high_resolution_clock::now();
         {

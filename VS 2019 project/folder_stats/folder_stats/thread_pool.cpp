@@ -5,8 +5,13 @@ Thread_pool::Thread_pool(size_t thread_amount, const std::queue<fs::path> files_
 	this->files_for_analysis = files_for_analysis;
 	res->clear();
 	res->shrink_to_fit();
-	this->res_vector_ptr = res;
-	initialize(thread_amount);
+	if (thread_amount <= std::thread::hardware_concurrency()) {
+		this->res_vector_ptr = res;
+		initialize(thread_amount);
+	}
+	else {
+		std::cout << "Your computer doesen`t support such ammount of threads. Max amount:" << std::thread::hardware_concurrency() << std::endl;
+	}
 }
 
 size_t Thread_pool::number_of_active_threads() const
@@ -56,7 +61,7 @@ void Thread_pool::initialize(size_t thread_amount)
 				{
 					std::unique_lock<std::mutex> ul(m);
 					cv.wait(ul, [=] {
-						return stop_threads || files_for_analysis.empty();
+						return stop_threads || !files_for_analysis.empty();
 					});
 
 					if (stop_threads && files_for_analysis.empty()) {
