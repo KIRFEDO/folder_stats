@@ -34,10 +34,11 @@ auto getFilePathsElements(const fs::path& root, const std::unordered_map<std::st
     return make_pair(file_counter, files_for_analyzing);
 }
 
-void print_res(const std::vector<long>& res) {
+void print_res(const std::vector<long int>& res) {
     if (res.size() != 4) {
         throw std::runtime_error("Result vector is damaged");
     }
+    std::cout << "Total number of lines:" << res[0]+res[1] << std::endl;
     std::cout << "Number of empty lines:" << res[0] << std::endl;
     std::cout << "Number of non-empty lines:" << res[1] << std::endl;
     std::cout << "Number of words lines:" << res[2] << std::endl;
